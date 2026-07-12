@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import Dispatch from './pages/Dispatch';
 import Vehicles from './pages/Vehicles';
 import Drivers from './pages/Drivers';
+import Trips from './pages/Trips';
+import Maintenance from './pages/Maintenance';
 import Auth from './pages/Auth';
 
 function App() {
@@ -27,6 +29,8 @@ function App() {
           <Route path="dispatch" element={<Dispatch />} />
           <Route path="vehicles" element={<Vehicles />} />
           <Route path="drivers" element={<Drivers />} />
+          <Route path="trips" element={<Trips />} />
+          <Route path="maintenance" element={<Maintenance />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>

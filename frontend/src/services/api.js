@@ -20,4 +20,5 @@ export const fetchTrips = () => axios.get(`${API_URL}/trips`);
 export const dispatchTrip = (data) => axios.post(`${API_URL}/trips/dispatch`, data);
 export const completeTrip = (id, data) => axios.post(`${API_URL}/trips/${id}/complete`, data);
 export const createMaintenance = (data) => axios.post(`${API_URL}/maintenance`, data);
+export const fetchMaintenance = () => axios.get(`${API_URL}/maintenance`);
 export const resolveMaintenance = (id) => axios.post(`${API_URL}/maintenance/${id}/resolve`);

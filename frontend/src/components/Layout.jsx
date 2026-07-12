@@ -19,6 +19,14 @@ const Layout = ({ onLogout }) => {
             <Send size={20} />
             Dispatch Trip
           </NavLink>
+          <NavLink to="/trips" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            <Truck size={20} />
+            Trips
+          </NavLink>
+          <NavLink to="/maintenance" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            <Truck size={20} />
+            Maintenance
+          </NavLink>
           <NavLink to="/vehicles" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
             <Truck size={20} />
             Vehicles

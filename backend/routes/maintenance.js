@@ -3,6 +3,16 @@ const router = express.Router();
 const Maintenance = require('../models/Maintenance');
 const Vehicle = require('../models/Vehicle');
 
+// Get all maintenance logs
+router.get('/', async (req, res) => {
+  try {
+    const logs = await Maintenance.find().populate('vehicle');
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Create a maintenance log & update vehicle status
 router.post('/', async (req, res) => {
   const { vehicleId, description, cost } = req.body;

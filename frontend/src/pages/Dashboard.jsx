@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Truck, Activity, DollarSign, AlertCircle, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { fetchVehicles, fetchTrips, fetchDrivers, fetchMaintenance } from '../services/api';
 
 const Dashboard = () => {
@@ -14,7 +14,10 @@ const Dashboard = () => {
 
   const [recentTrips, setRecentTrips] = useState([]);
   const [chartData, setChartData] = useState([]);
+  const [maintChartData, setMaintChartData] = useState([]);
+  const [utilizationData, setUtilizationData] = useState([]);
   const [driverAlerts, setDriverAlerts] = useState([]);
+  const [vehicleAlerts, setVehicleAlerts] = useState([]);
 
   useEffect(() => {
     loadDashboardData();
@@ -67,6 +70,25 @@ const Dashboard = () => {
         { name: 'May', revenue: 28000, expenses: 12000 },
         { name: 'Current', revenue: totalRev, expenses: currentMonthExpenses }
       ]);
+
+      // Maintenance Pie Chart
+      const maintTypes = {};
+      maintenance.forEach(m => {
+        maintTypes[m.type] = (maintTypes[m.type] || 0) + (m.cost || 0);
+      });
+      const mData = Object.keys(maintTypes).map(k => ({ name: k, value: maintTypes[k] }));
+      setMaintChartData(mData.length > 0 ? mData : [{ name: 'No Data', value: 1 }]);
+
+      // Utilization Pie Chart
+      const uData = [
+        { name: 'Available', value: vehicles.filter(v => v.status === 'Available').length },
+        { name: 'On Trip', value: vehicles.filter(v => v.status === 'On Trip').length },
+        { name: 'In Shop', value: vehicles.filter(v => v.status === 'In Shop').length }
+      ].filter(d => d.value > 0);
+      setUtilizationData(uData.length > 0 ? uData : [{ name: 'No Vehicles', value: 1 }]);
+
+      // Vehicle Alerts (Maintenance Due Soon or In Shop)
+      setVehicleAlerts(vehicles.filter(v => v.status === 'In Shop'));
     } catch (err) {
       console.error("Failed to load dashboard data");
     }
@@ -107,6 +129,17 @@ const Dashboard = () => {
           </h3>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
             You have {driverAlerts.length} driver(s) with Suspended or Expired licenses. They have been automatically removed from the dispatch pool.
+          </p>
+        </div>
+      )}
+
+      {vehicleAlerts.length > 0 && (
+        <div className="glass-panel" style={{ marginBottom: '20px', borderLeft: '4px solid var(--warning)' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--warning)', marginBottom: '8px' }}>
+            <AlertCircle size={18} /> Vehicle Maintenance Alert
+          </h3>
+          <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+            You have {vehicleAlerts.length} vehicle(s) currently In Shop. Please check the Maintenance logs.
           </p>
         </div>
       )}
@@ -165,6 +198,45 @@ const Dashboard = () => {
               <Area type="monotone" dataKey="expenses" name="Expenses (Fuel + Maint)" stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#colorExpenses)" />
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Pie Charts Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+        <div className="glass-panel">
+          <h2 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: '600' }}>Vehicle Utilization</h2>
+          <div style={{ height: '250px', width: '100%' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={utilizationData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                  {utilizationData.map((entry, index) => {
+                    const colors = { 'Available': '#10b981', 'On Trip': '#3b82f6', 'In Shop': '#f59e0b', 'No Vehicles': '#333' };
+                    return <Cell key={`cell-${index}`} fill={colors[entry.name] || '#8b5cf6'} />;
+                  })}
+                </Pie>
+                <Tooltip contentStyle={{ backgroundColor: 'rgba(19, 20, 28, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="glass-panel">
+          <h2 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: '600' }}>Maintenance Cost Analysis</h2>
+          <div style={{ height: '250px', width: '100%' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={maintChartData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                  {maintChartData.map((entry, index) => {
+                    const colors = ['#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#3b82f6'];
+                    return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                  })}
+                </Pie>
+                <Tooltip contentStyle={{ backgroundColor: 'rgba(19, 20, 28, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} formatter={(value) => `$${value}`} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

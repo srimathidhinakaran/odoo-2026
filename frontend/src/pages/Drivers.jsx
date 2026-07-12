@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Users, Plus, Edit, FileText } from 'lucide-react';
+import { Users, Plus, Edit, FileText, Star } from 'lucide-react';
 import { fetchDrivers } from '../services/api';
 import DocumentModal from '../components/DocumentModal';
+import DriverPerformanceModal from '../components/DriverPerformanceModal';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -20,6 +21,7 @@ const Drivers = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [activeDocDriver, setActiveDocDriver] = useState(null);
+  const [activePerformanceDriver, setActivePerformanceDriver] = useState(null);
 
   useEffect(() => {
     loadDrivers();
@@ -131,10 +133,16 @@ const Drivers = () => {
                 </td>
                 <td><span className={`status-badge status-${d.status.toLowerCase().replace(' ', '')}`}>{d.status}</span></td>
                 <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button 
+                      onClick={() => setActivePerformanceDriver(d)}
+                      style={{ background: 'transparent', border: 'none', color: 'var(--warning)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: '600' }}
+                    >
+                      <Star size={16} /> Score
+                    </button>
                     <button 
                       onClick={() => setActiveDocDriver(d._id)}
-                      style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}
+                      style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: '600' }}
                     >
                       <FileText size={16} /> Docs
                     </button>
@@ -153,6 +161,14 @@ const Drivers = () => {
           refId={activeDocDriver} 
           refModel="Driver" 
           onClose={() => setActiveDocDriver(null)} 
+        />
+      )}
+
+      {activePerformanceDriver && (
+        <DriverPerformanceModal 
+          driverId={activePerformanceDriver._id} 
+          driverName={activePerformanceDriver.name}
+          onClose={() => setActivePerformanceDriver(null)} 
         />
       )}
     </div>

@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { fetchTrips, completeTrip } from '../services/api';
-import { Navigation, CheckCircle } from 'lucide-react';
+import { Navigation, CheckCircle, Clock } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
+import TripTimelineModal from '../components/TripTimelineModal';
 
 const Trips = () => {
   const [trips, setTrips] = useState([]);
   const [showFuelModal, setShowFuelModal] = useState(false);
   const [activeTrip, setActiveTrip] = useState(null);
   const [fuelCost, setFuelCost] = useState('');
+  const [timelineTrip, setTimelineTrip] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -97,17 +99,25 @@ const Trips = () => {
                 <td>${t.revenue}</td>
                 <td><span className={`status-badge status-${t.status.toLowerCase().replace(' ', '')}`}>{t.status}</span></td>
                 <td>
-                  {t.status === 'In Progress' && (
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <button 
-                      onClick={() => { setActiveTrip(t._id); setShowFuelModal(true); }}
-                      style={{ background: 'var(--success)', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: '600' }}
+                      onClick={() => setTimelineTrip(t)}
+                      style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: '600' }}
                     >
-                      <CheckCircle size={14} /> Finish
+                      <Clock size={14} /> Timeline
                     </button>
-                  )}
-                  {t.status === 'Completed' && (
-                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Fuel: ${t.fuelCost || 0}</span>
-                  )}
+                    {t.status === 'In Progress' && (
+                      <button 
+                        onClick={() => { setActiveTrip(t._id); setShowFuelModal(true); }}
+                        style={{ background: 'var(--success)', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: '600' }}
+                      >
+                        <CheckCircle size={14} /> Finish
+                      </button>
+                    )}
+                    {t.status === 'Completed' && (
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Fuel: ${t.fuelCost || 0}</span>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -137,6 +147,12 @@ const Trips = () => {
             </form>
           </div>
         </div>
+      )}
+      {timelineTrip && (
+        <TripTimelineModal 
+          trip={timelineTrip} 
+          onClose={() => setTimelineTrip(null)} 
+        />
       )}
     </div>
   );

@@ -9,6 +9,7 @@ import Trips from './pages/Trips';
 import Maintenance from './pages/Maintenance';
 import FuelLogs from './pages/FuelLogs';
 import Expenses from './pages/Expenses';
+import LiveTracking from './pages/LiveTracking';
 import Auth from './pages/Auth';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           <Route path="maintenance" element={<Maintenance />} />
           <Route path="fuel" element={<FuelLogs />} />
           <Route path="expenses" element={<Expenses />} />
+          <Route path="tracking" element={<LiveTracking />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>

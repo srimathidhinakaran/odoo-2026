@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Send, MapPin, Truck, Users, DollarSign, Weight } from 'lucide-react';
+import { Send, MapPin, Truck, Users, DollarSign, Weight, Sparkles } from 'lucide-react';
 import { fetchVehicles, fetchDrivers, dispatchTrip } from '../services/api';
 
 const Dispatch = () => {
@@ -16,6 +16,8 @@ const Dispatch = () => {
   const [availableDrivers, setAvailableDrivers] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState(null);
 
   useEffect(() => {
     const loadResources = async () => {
@@ -46,6 +48,32 @@ const Dispatch = () => {
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to dispatch trip.');
     }
+  };
+
+  const handleSmartSuggestion = () => {
+    if (!formData.origin || !formData.destination || !formData.cargoWeight) {
+      setError('Please provide Origin, Destination, and Cargo Weight to get AI suggestions.');
+      return;
+    }
+    setError('');
+    setIsAiLoading(true);
+    
+    // Simulate AI API call
+    setTimeout(() => {
+      // Mocked calculation based on simple length string difference, just for demo
+      const distance = Math.floor(Math.random() * 800) + 100; // 100 to 900 km
+      const recommendedRevenue = distance * 2.5 + (formData.cargoWeight * 0.1); // Dynamic calculation
+      
+      setAiSuggestion({
+        route: `${formData.origin} → Interstate Hwy → ${formData.destination}`,
+        distance: distance,
+        estFuelLiters: (distance / 5).toFixed(1), // Assuming 5km/l
+        estCost: (distance * 1.2).toFixed(0), // $1.2 per km cost
+      });
+      
+      setFormData(prev => ({ ...prev, revenue: Math.floor(recommendedRevenue) }));
+      setIsAiLoading(false);
+    }, 1500);
   };
 
   return (
@@ -137,6 +165,44 @@ const Dispatch = () => {
                 required
               />
             </div>
+          </div>
+
+          {/* AI Suggestion Panel */}
+          <div style={{ background: 'rgba(139, 92, 246, 0.05)', border: '1px solid rgba(139, 92, 246, 0.2)', padding: '16px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--accent-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Sparkles size={18} /> AI Route Optimization
+              </h3>
+              <button 
+                type="button" 
+                onClick={handleSmartSuggestion} 
+                disabled={isAiLoading}
+                style={{ background: 'linear-gradient(135deg, #8b5cf6, #d946ef)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}
+              >
+                {isAiLoading ? 'Analyzing...' : 'Get Smart Suggestion'}
+              </button>
+            </div>
+            
+            {aiSuggestion && (
+              <div className="animate-fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginTop: '8px' }}>
+                <div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Recommended Route</div>
+                  <div style={{ fontSize: '14px', fontWeight: '500' }}>{aiSuggestion.route}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Distance</div>
+                  <div style={{ fontSize: '14px', fontWeight: '500' }}>{aiSuggestion.distance} km</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Est. Fuel Usage</div>
+                  <div style={{ fontSize: '14px', fontWeight: '500' }}>{aiSuggestion.estFuelLiters} Litres</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Est. Trip Cost</div>
+                  <div style={{ fontSize: '14px', fontWeight: '500' }}>${aiSuggestion.estCost}</div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>

@@ -70,7 +70,11 @@ const Expenses = () => {
             >
               <option value="Fuel">Fuel</option>
               <option value="Toll">Toll</option>
+              <option value="Parking">Parking</option>
               <option value="Maintenance">Maintenance</option>
+              <option value="Driver Allowance">Driver Allowance</option>
+              <option value="Insurance">Insurance</option>
+              <option value="Permit Charges">Permit Charges</option>
               <option value="Other">Other</option>
             </select>
 

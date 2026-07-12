@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { LayoutDashboard, Truck, Users, Send, Map, Wrench, Fuel, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Truck, Users, Send, Map, Wrench, Fuel, DollarSign, MapPin } from 'lucide-react';
 
 const Layout = ({ onLogout }) => {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
@@ -24,6 +24,10 @@ const Layout = ({ onLogout }) => {
           <NavLink to="/trips" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
             <Map size={20} />
             Trips
+          </NavLink>
+          <NavLink to="/tracking" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            <MapPin size={20} />
+            Live Tracking
           </NavLink>
           <NavLink to="/maintenance" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
             <Wrench size={20} />

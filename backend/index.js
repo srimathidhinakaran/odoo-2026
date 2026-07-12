@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const app = express();
 
 // Route imports
+const authRoutes = require('./routes/auth');
 const vehicleRoutes = require('./routes/vehicles');
 const driverRoutes = require('./routes/drivers');
 const tripRoutes = require('./routes/trips');
@@ -19,6 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // Mount Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/trips', tripRoutes);

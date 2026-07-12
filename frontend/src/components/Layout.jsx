@@ -1,7 +1,7 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { LayoutDashboard, Truck, Users, Send } from 'lucide-react';
 
-const Layout = () => {
+const Layout = ({ onLogout }) => {
   return (
     <div className="app-container">
       <aside className="sidebar">
@@ -28,6 +28,12 @@ const Layout = () => {
             Drivers
           </NavLink>
         </nav>
+        
+        <div style={{ marginTop: 'auto' }}>
+          <button onClick={onLogout} className="nav-link" style={{ background: 'transparent', border: 'none', width: '100%', cursor: 'pointer', textAlign: 'left', color: 'var(--danger)' }}>
+            Log Out
+          </button>
+        </div>
       </aside>
 
       <main className="main-content">

@@ -11,6 +11,9 @@ const vehicleRoutes = require('./routes/vehicles');
 const driverRoutes = require('./routes/drivers');
 const tripRoutes = require('./routes/trips');
 const maintenanceRoutes = require('./routes/maintenance');
+const fuelRoutes = require('./routes/fuel');
+const expenseRoutes = require('./routes/expenses');
+const documentRoutes = require('./routes/documents');
 
 // Connect to database
 connectDB();
@@ -25,6 +28,9 @@ app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/fuel', fuelRoutes);
+app.use('/api/expenses', expenseRoutes);
+app.use('/api/documents', documentRoutes);
 
 // Routes (to be added)
 app.get('/', (req, res) => {

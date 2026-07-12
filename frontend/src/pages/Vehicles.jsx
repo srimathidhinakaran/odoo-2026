@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Truck, Plus, Trash2, Edit } from 'lucide-react';
+import { Truck, Plus, Trash2, Edit, FileText } from 'lucide-react';
 import { fetchVehicles } from '../services/api';
+import DocumentModal from '../components/DocumentModal';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -20,6 +21,7 @@ const Vehicles = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [activeDocVehicle, setActiveDocVehicle] = useState(null);
 
   useEffect(() => {
     loadVehicles();
@@ -132,6 +134,12 @@ const Vehicles = () => {
                 <td><span className={`status-badge status-${v.status.toLowerCase().replace(' ', '')}`}>{v.status}</span></td>
                 <td>
                   <div style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      onClick={() => setActiveDocVehicle(v._id)}
+                      style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}
+                    >
+                      <FileText size={16} /> Docs
+                    </button>
                     <Edit size={16} style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} />
                   </div>
                 </td>
@@ -141,6 +149,14 @@ const Vehicles = () => {
         </table>
         {filteredVehicles.length === 0 && <p style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No vehicles found.</p>}
       </div>
+
+      {activeDocVehicle && (
+        <DocumentModal 
+          refId={activeDocVehicle} 
+          refModel="Vehicle" 
+          onClose={() => setActiveDocVehicle(null)} 
+        />
+      )}
     </div>
   );
 };

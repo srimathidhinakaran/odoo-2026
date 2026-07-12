@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Users, Plus, Edit } from 'lucide-react';
+import { Users, Plus, Edit, FileText } from 'lucide-react';
 import { fetchDrivers } from '../services/api';
+import DocumentModal from '../components/DocumentModal';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -18,6 +19,7 @@ const Drivers = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [activeDocDriver, setActiveDocDriver] = useState(null);
 
   useEffect(() => {
     loadDrivers();
@@ -130,6 +132,12 @@ const Drivers = () => {
                 <td><span className={`status-badge status-${d.status.toLowerCase().replace(' ', '')}`}>{d.status}</span></td>
                 <td>
                   <div style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      onClick={() => setActiveDocDriver(d._id)}
+                      style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}
+                    >
+                      <FileText size={16} /> Docs
+                    </button>
                     <Edit size={16} style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} />
                   </div>
                 </td>
@@ -139,6 +147,14 @@ const Drivers = () => {
         </table>
         {filteredDrivers.length === 0 && <p style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No drivers found.</p>}
       </div>
+
+      {activeDocDriver && (
+        <DocumentModal 
+          refId={activeDocDriver} 
+          refModel="Driver" 
+          onClose={() => setActiveDocDriver(null)} 
+        />
+      )}
     </div>
   );
 };

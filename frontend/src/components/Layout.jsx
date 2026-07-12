@@ -27,6 +27,14 @@ const Layout = ({ onLogout }) => {
             <Truck size={20} />
             Maintenance
           </NavLink>
+          <NavLink to="/fuel" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            <Truck size={20} />
+            Fuel Logs
+          </NavLink>
+          <NavLink to="/expenses" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+            <Truck size={20} />
+            Expenses
+          </NavLink>
           <NavLink to="/vehicles" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
             <Truck size={20} />
             Vehicles

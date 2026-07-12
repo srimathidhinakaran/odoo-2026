@@ -9,6 +9,9 @@ const Trips = () => {
   const [activeTrip, setActiveTrip] = useState(null);
   const [fuelCost, setFuelCost] = useState('');
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+
   useEffect(() => {
     loadTrips();
   }, []);
@@ -36,6 +39,14 @@ const Trips = () => {
     }
   };
 
+  const filteredTrips = trips.filter(t => {
+    const matchesSearch = t.origin.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          t.destination.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (t.driver?.name || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || t.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="animate-fade-in">
       <Toaster position="top-center" />
@@ -44,6 +55,26 @@ const Trips = () => {
       </div>
 
       <div className="glass-panel">
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+          <input 
+            type="text" 
+            placeholder="Search by Origin, Destination, or Driver..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ flex: 1, padding: '10px 16px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white' }}
+          />
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={{ padding: '10px 16px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', minWidth: '150px' }}
+          >
+            <option value="All">All Statuses</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
         <table className="data-table">
           <thead>
             <tr>
@@ -57,7 +88,7 @@ const Trips = () => {
             </tr>
           </thead>
           <tbody>
-            {trips.map(t => (
+            {filteredTrips.map(t => (
               <tr key={t._id}>
                 <td style={{ fontWeight: '500' }}>{t.vehicle?.registrationNumber || 'N/A'}</td>
                 <td>{t.driver?.name || 'N/A'}</td>
@@ -82,7 +113,7 @@ const Trips = () => {
             ))}
           </tbody>
         </table>
-        {trips.length === 0 && <p style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No trips found.</p>}
+        {filteredTrips.length === 0 && <p style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No trips found.</p>}
       </div>
 
       {showFuelModal && (

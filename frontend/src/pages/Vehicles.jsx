@@ -18,6 +18,9 @@ const Vehicles = () => {
     acquisitionCost: ''
   });
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+
   useEffect(() => {
     loadVehicles();
   }, []);
@@ -43,6 +46,14 @@ const Vehicles = () => {
       toast.error('Failed to add vehicle');
     }
   };
+
+  const filteredVehicles = vehicles.filter(v => {
+    const matchesSearch = v.registrationNumber.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          v.make.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          v.model.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || v.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="animate-fade-in">
@@ -79,6 +90,27 @@ const Vehicles = () => {
       )}
 
       <div className="glass-panel">
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+          <input 
+            type="text" 
+            placeholder="Search by Make, Model, or Reg..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ flex: 1, padding: '10px 16px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white' }}
+          />
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={{ padding: '10px 16px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', minWidth: '150px' }}
+          >
+            <option value="All">All Statuses</option>
+            <option value="Available">Available</option>
+            <option value="On Trip">On Trip</option>
+            <option value="In Shop">In Shop</option>
+            <option value="Retired">Retired</option>
+          </select>
+        </div>
+
         <table className="data-table">
           <thead>
             <tr>
@@ -91,7 +123,7 @@ const Vehicles = () => {
             </tr>
           </thead>
           <tbody>
-            {vehicles.map(v => (
+            {filteredVehicles.map(v => (
               <tr key={v._id}>
                 <td style={{ fontWeight: '500' }}>{v.registrationNumber}</td>
                 <td>{v.make} {v.model}</td>
@@ -107,7 +139,7 @@ const Vehicles = () => {
             ))}
           </tbody>
         </table>
-        {vehicles.length === 0 && <p style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No vehicles found. Add one above.</p>}
+        {filteredVehicles.length === 0 && <p style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No vehicles found.</p>}
       </div>
     </div>
   );

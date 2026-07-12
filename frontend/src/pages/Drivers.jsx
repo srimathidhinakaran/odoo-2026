@@ -16,6 +16,9 @@ const Drivers = () => {
     licenseStatus: 'Valid'
   });
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+
   useEffect(() => {
     loadDrivers();
   }, []);
@@ -41,6 +44,13 @@ const Drivers = () => {
       toast.error('Failed to add driver');
     }
   };
+
+  const filteredDrivers = drivers.filter(d => {
+    const matchesSearch = d.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          d.licenseNumber.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || d.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="animate-fade-in">
@@ -74,6 +84,27 @@ const Drivers = () => {
       )}
 
       <div className="glass-panel">
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+          <input 
+            type="text" 
+            placeholder="Search by Name or License..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ flex: 1, padding: '10px 16px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white' }}
+          />
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={{ padding: '10px 16px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white', minWidth: '150px' }}
+          >
+            <option value="All">All Statuses</option>
+            <option value="Available">Available</option>
+            <option value="On Trip">On Trip</option>
+            <option value="Off Duty">Off Duty</option>
+            <option value="Suspended">Suspended</option>
+          </select>
+        </div>
+
         <table className="data-table">
           <thead>
             <tr>
@@ -86,7 +117,7 @@ const Drivers = () => {
             </tr>
           </thead>
           <tbody>
-            {drivers.map(d => (
+            {filteredDrivers.map(d => (
               <tr key={d._id}>
                 <td style={{ fontWeight: '500' }}>{d.name}</td>
                 <td>{d.licenseNumber}</td>
@@ -106,7 +137,7 @@ const Drivers = () => {
             ))}
           </tbody>
         </table>
-        {drivers.length === 0 && <p style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No drivers found. Add one above.</p>}
+        {filteredDrivers.length === 0 && <p style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No drivers found.</p>}
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import { Outlet, NavLink } from 'react-router-dom';
 import { LayoutDashboard, Truck, Users, Send, Map, Wrench, Fuel, DollarSign } from 'lucide-react';
 
 const Layout = ({ onLogout }) => {
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+
   return (
     <div className="app-container">
       <aside className="sidebar">
@@ -46,6 +48,12 @@ const Layout = ({ onLogout }) => {
         </nav>
         
         <div className="sidebar-logout">
+          {user && (
+            <div style={{ padding: '12px 16px', marginBottom: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
+              <div style={{ fontWeight: '600', fontSize: '14px', color: 'white' }}>{user.name}</div>
+              <div style={{ fontSize: '12px', color: 'var(--accent-primary)', marginTop: '2px' }}>{user.role}</div>
+            </div>
+          )}
           <button onClick={onLogout} className="nav-link logout-btn">
             Log Out
           </button>

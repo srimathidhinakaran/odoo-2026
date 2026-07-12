@@ -6,7 +6,7 @@ import { loginUser, registerUser, googleAuth } from '../services/api';
 
 const Auth = ({ onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'Dispatcher' });
 
   const handleManualAuth = async (e) => {
     e.preventDefault();
@@ -52,14 +52,24 @@ const Auth = ({ onAuthSuccess }) => {
 
         <form onSubmit={handleManualAuth} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
           {!isLogin && (
-            <input 
-              type="text" 
-              placeholder="Full Name"
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white' }}
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              required
-            />
+            <>
+              <input 
+                type="text" 
+                placeholder="Full Name"
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white' }}
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                required
+              />
+              <select 
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', color: 'white' }}
+                value={formData.role}
+                onChange={(e) => setFormData({...formData, role: e.target.value})}
+              >
+                <option value="Dispatcher">Dispatcher</option>
+                <option value="Admin">Admin / Fleet Manager</option>
+              </select>
+            </>
           )}
           <input 
             type="email" 

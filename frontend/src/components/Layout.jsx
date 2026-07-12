@@ -45,8 +45,8 @@ const Layout = ({ onLogout }) => {
           </NavLink>
         </nav>
         
-        <div style={{ marginTop: 'auto' }}>
-          <button onClick={onLogout} className="nav-link" style={{ background: 'transparent', border: 'none', width: '100%', cursor: 'pointer', textAlign: 'left', color: 'var(--danger)' }}>
+        <div className="sidebar-logout">
+          <button onClick={onLogout} className="nav-link logout-btn">
             Log Out
           </button>
         </div>

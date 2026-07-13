@@ -40,4 +40,18 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  
+  // Keep-alive ping to prevent Render free tier sleep
+  const RENDER_URL = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL;
+  if (RENDER_URL) {
+    console.log(`Setting up keep-alive ping for ${RENDER_URL}`);
+    setInterval(async () => {
+      try {
+        const response = await fetch(RENDER_URL);
+        console.log(`[Keep-Alive] Pinged ${RENDER_URL}: Status ${response.status}`);
+      } catch (error) {
+        console.error(`[Keep-Alive] Ping failed:`, error.message);
+      }
+    }, 14 * 60 * 1000); // 14 minutes
+  }
 });

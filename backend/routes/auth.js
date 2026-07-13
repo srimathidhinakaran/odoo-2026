@@ -20,9 +20,13 @@ const generateToken = (id, role) => {
 // @route POST /api/auth/register
 router.post('/register', async (req, res) => {
   const { name, email, password, role } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Name, email, and password are required' });
+  }
+
   try {
     const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: 'User already exists' });
+    if (userExists) return res.status(400).json({ message: `User already exists with email: ${email}` });
 
     // Hash password
     const salt = await bcrypt.genSalt(10);

@@ -8,7 +8,10 @@ const userSchema = new mongoose.Schema({
     type: String, 
     enum: ['Admin', 'Dispatcher'], 
     default: 'Dispatcher' 
-  }
+  },
+  isVerified: { type: Boolean, default: false },
+  otp: { type: String },
+  otpExpiry: { type: Date }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

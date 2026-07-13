@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Truck, Activity, DollarSign, AlertCircle, Download } from 'lucide-react';
+import { Truck, Activity, DollarSign, AlertCircle, Download, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { fetchVehicles, fetchTrips, fetchDrivers, fetchMaintenance } from '../services/api';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -108,6 +110,30 @@ const Dashboard = () => {
     document.body.removeChild(link);
   };
 
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text('TransitOps - Fleet Operations Report', 14, 22);
+    
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 32);
+    
+    doc.autoTable({
+      startY: 40,
+      head: [['Trip Route', 'Vehicle', 'Status', 'Revenue']],
+      body: recentTrips.map(t => [
+        `${t.origin} to ${t.destination}`,
+        t.vehicle?.registrationNumber || 'N/A',
+        t.status,
+        `$${t.revenue}`
+      ]),
+      theme: 'grid',
+      headStyles: { fillColor: [59, 130, 246] }
+    });
+    
+    doc.save('transitops_report.pdf');
+  };
+
   return (
     <div className="animate-fade-in">
       <div className="page-header">
@@ -115,6 +141,9 @@ const Dashboard = () => {
         <div style={{ display: 'flex', gap: '10px' }}>
           <button onClick={exportCSV} className="btn-primary" style={{ background: 'transparent', border: '1px solid var(--glass-border)' }}>
             <Download size={18} /> Export CSV
+          </button>
+          <button onClick={exportPDF} className="btn-primary" style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+            <FileText size={18} /> Export PDF
           </button>
           <Link to="/dispatch" className="btn-primary">
             Dispatch New Trip

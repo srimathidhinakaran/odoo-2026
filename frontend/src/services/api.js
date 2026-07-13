@@ -12,6 +12,8 @@ axios.interceptors.request.use((config) => {
 
 export const loginUser = (data) => axios.post(`${API_URL}/auth/login`, data);
 export const registerUser = (data) => axios.post(`${API_URL}/auth/register`, data);
+export const verifyOtp = (data) => axios.post(`${API_URL}/auth/verify-otp`, data);
+export const resendOtp = (data) => axios.post(`${API_URL}/auth/resend-otp`, data);
 export const googleAuth = (credential) => axios.post(`${API_URL}/auth/google`, { credential });
 
 export const fetchVehicles = () => axios.get(`${API_URL}/vehicles`);
